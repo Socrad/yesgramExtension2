@@ -1,0 +1,26 @@
+{
+  "manifest_version" : 3,
+  "name" : "Yesgram",
+  "description" : "Solve nonograms at https://ko.puzzle-nonograms.com",
+  "version" : "1.0",
+  "icons" : {
+    "16" : "images/nonogram_icon_16x16.png",
+    "32" : "images/nonogram_icon_32x32.png",
+    "48" : "images/nonogram_icon_48x48.png",
+    "128" : "images/nonogram_icon_128x128.png"
+  },
+  "action" : {
+    "default_icon" : "images/nonogram_icon_32x32.png",
+    "default_title" : "Yesgram",
+    "default_popup" : "popup/popup.html"
+  },
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions" : ["https://ko.puzzle-nonograms.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://ko.puzzle-nonograms.com/*"],
+      "js": ["contentScript.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

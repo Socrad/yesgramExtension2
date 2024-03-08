@@ -1,0 +1,26 @@
+/* 여기에 필요한 스타일을 추가하세요 */
+.button {
+  padding: 10px 20px;
+  margin: 10px;
+  background-color: #4CAF50; /* 녹색 배경 */
+  color: white; /* 흰색 텍스트 */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.button:hover {
+  background-color: #45a049; /* 버튼 호버 시 색상 변경 */
+}
+
+#buttonContainer button {
+  width: 200px; /* 버튼의 너비를 조절합니다. 필요에 따라 조정하세요. */
+  margin: 10px 0; /* 버튼 주변의 여백을 추가합니다. */
+  padding: 10px; /* 버튼 내부의 패딩을 추가하여 텍스트와 버튼 경계 사이의 공간을 늘립니다. */
+  text-align: center; /* 버튼 내의 텍스트를 가운데 정렬합니다. */
+  white-space: nowrap; /* 텍스트가 버튼 너비를 넘어가지 않도록 합니다. */
+  overflow: hidden; /* 내용이 넘칠 경우 숨깁니다. */
+  text-overflow: ellipsis; /* 내용이 넘칠 경우 생략 부호(...)를 표시합니다. */
+}
+
