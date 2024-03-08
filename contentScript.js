@@ -53,15 +53,30 @@ function paintTiles(boardState) {
   });
 }
 
+function isBoardNotEmpty() {
+  const tiles = document.querySelectorAll('div.cell.selectable');
+  for (let i = 0; i < tiles.length; i++) {
+    if (tiles[i].classList.contains('cell-on')) { // 예시로 'cell-on' 클래스를 사용, 실제 클래스는 페이지에 따라 다를 수 있음
+      return true;
+    } else if (tiles[i].classList.contains('cell-x')) {
+      return true;
+    }
+  }
+  return false;
+}
+
 if (!window.myContentScriptHasRun) {
   // background script 혹은 팝업 스크립트로부터 메시지를 받으면 데이터를 추출하여 응답합니다.
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'extractData') {
       const data = extractData();
       sendResponse({data: data});
+    } else if (request.action === "checkBoardState") {
+      const notEmpty = isBoardNotEmpty();
+      sendResponse({boardNotEmpty: notEmpty});
     } else if (request.boardState) {
       paintTiles(request.boardState)
-    }
+    } 
   });
 }
 

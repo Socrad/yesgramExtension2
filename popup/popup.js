@@ -5,41 +5,47 @@ const NEUTRAL = 0;
 
 document.addEventListener('DOMContentLoaded', function() {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      let currentTab = tabs[0];
-      let buttonContainer = document.getElementById('buttonContainer');
-      let button = document.createElement('button');
-      
-      if (currentTab.url.includes('https://ko.puzzle-nonograms.com')) {
+    let currentTab = tabs[0];
+    let buttonContainer = document.getElementById('buttonContainer');
+    let button = document.createElement('button');
+    
+    if (currentTab.url.includes('https://ko.puzzle-nonograms.com')) {
         button.innerText = '노노그램 풀기';
         // 팝업 스크립트에서 '노노그램 풀기' 버튼 클릭 이벤트를 처리하는 부분
         button.onclick = function() {
-          // 현재 탭에 content script 삽입
-          chrome.scripting.executeScript({target : {tabId: currentTab.id}, files: ["contentScript.js"]}, function() {
-            // 삽입 완료 후, content script에 메시지 보내기
-            chrome.tabs.sendMessage(currentTab.id, {action: 'extractData'}, function(response) {
-              if (response && response.data) {
-                // Content Script로부터 추출된 데이터를 solve() 함수에 전달합니다.
-                const state = solve(response.data);
-                chrome.tabs.sendMessage(currentTab.id, {boardState: state});
-                
-              } else {
-                console.error('Failed to extract data.');
-              }
+            // 현재 탭에 content script 삽입
+            chrome.scripting.executeScript({target : {tabId: currentTab.id}, files: ["contentScript.js"]}, function() {
+                // 삽입 완료 후, content script에 메시지 보내기
+                chrome.tabs.sendMessage(tabs[0].id, {action: "checkBoardState"}, function(response) {
+                    if (response.boardNotEmpty) {
+                        alert('게임 보드가 비어있지 않습니다. 모든 칸이 비어있는 상태에서 시작해 주세요.');
+                    } else {
+                        chrome.tabs.sendMessage(currentTab.id, {action: 'extractData'}, function(response) {
+                        if (response && response.data) {
+                            // Content Script로부터 추출된 데이터를 solve() 함수에 전달합니다.
+                            const state = solve(response.data);
+                            chrome.tabs.sendMessage(currentTab.id, {boardState: state});
+                            
+                        } else {
+                            console.error('Failed to extract data.');
+                        }
+                        });
+                    }
+                });
             });
-          });
         }
-      } else {
-          button.innerText = '노노그램 사이트로 이동';
-          button.onclick = function() {
-            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                var currentTab = tabs[0];
-                chrome.tabs.update(currentTab.id, {url: 'https://ko.puzzle-nonograms.com'});
-                window.close();
-            });
+    } else {
+        button.innerText = '노노그램 사이트로 이동';
+        button.onclick = function() {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            var currentTab = tabs[0];
+            chrome.tabs.update(currentTab.id, {url: 'https://ko.puzzle-nonograms.com'});
+            window.close();
+        });
 
-        };
-      }
-      buttonContainer.appendChild(button);
+    };
+    }
+    buttonContainer.appendChild(button);
   });
 });
 
