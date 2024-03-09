@@ -1,6 +1,6 @@
 
-Introduction of the work
-========================
+Introduction
+============
 This Chrome extension solves the Nonogram puzzle at https://ko.puzzle-nonograms.com
 
 The entire process is not automatic, it only marks the tiles that should not be painted.
