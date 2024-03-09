@@ -1,4 +1,4 @@
-========================
+
 Introduction of the work
 ========================
 This Chrome extension solves the Nonogram puzzle at https://ko.puzzle-nonograms.com
@@ -31,12 +31,12 @@ In all of this process, all you need to gain calmness, joy, and a healing heart 
 
 Unleash your sensitivity from now on!
 
-==============
+
 How to install
 ==============
 This program is a Chrome extension that is installed in the Chrome browser.
 
-========== 
+
 How to use
 ==========
 When you press the Yesgram extension icon on another page, the “Go to the Nonogram site” button pops up. Pressing the button will take you to the Nonogram site.
