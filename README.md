@@ -34,7 +34,7 @@ Unleash your sensitivity from now on!
 
 How to install
 ==============
-This program is a Chrome extension that is installed in the Chrome browser.
+This is a Chrome extension that is installed in the Chrome browser.
 
 
 How to use
