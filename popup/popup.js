@@ -10,58 +10,65 @@ document.addEventListener('DOMContentLoaded', function() {
     let button = document.createElement('button');
     
     if (currentTab.url.includes('https://ko.puzzle-nonograms.com')) {
-        button.innerText = '노노그램 풀기';
-        // 팝업 스크립트에서 '노노그램 풀기' 버튼 클릭 이벤트를 처리하는 부분
-        button.onclick = function() {
-          // 현재 탭에 content script 삽입
-          chrome.scripting.executeScript({target : {tabId: currentTab.id}, files: ["contentScript.js"]}, function() {
-            if (chrome.runtime.lastError) {
-              console.error(`Script injection failed: ${chrome.runtime.lastError.message}`);
-              return;
-            }
-            // 삽입 완료 후, content script에 메시지 보내기
-            chrome.tabs.sendMessage(currentTab.id, {action: "checkBoardState"}, function(response) {
-              if (chrome.runtime.lastError) {
-                console.error(`Message sending failed: ${chrome.runtime.lastError.message}`);
-                return;
-              }
-              if (response.boardNotEmpty) {
-                alert('게임 보드가 비어있지 않습니다. 모든 칸이 비어있는 상태에서 시작해 주세요.');
-              } else {
-                chrome.tabs.sendMessage(currentTab.id, {action: 'extractData'}, function(response) {
-                  if (chrome.runtime.lastError) {
-                    console.error(`Message sending failed: ${chrome.runtime.lastError.message}`);
-                    return;
-                  }
-                  if (response && response.data) {
-                    // Content Script로부터 추출된 데이터를 solve() 함수에 전달합니다.
-                    const state = solve(response.data);
-                    chrome.tabs.sendMessage(currentTab.id, {boardState: state});
-                  } else {
-                    console.error('Failed to extract data.');
-                  }
-                });
-              }
-            });
-          });
-        }
+      button.innerText = '노노그램 풀기';
+      button.onclick = executeScript(currentTab.id)
     } else {
         button.innerText = '노노그램 사이트로 이동';
         button.onclick = function() {
-            chrome.tabs.update(currentTab.id, {url: 'https://ko.puzzle-nonograms.com'});
-            window.close();
+          chrome.tabs.update(currentTab.id, {url: 'https://ko.puzzle-nonograms.com'});
+          window.close();
         }
-
     }
-    
     buttonContainer.appendChild(button);
   });
 });
 
-function solve(data) {
+function executeScript(currentTabId) {
+  return function(event) {
+    chrome.scripting.executeScript({target : {tabId: currentTabId}, files: ["contentScript.js"]}, function() {
+      if (chrome.runtime.lastError) {
+        console.error(`Script injection failed: ${chrome.runtime.lastError.message}`);
+        return;
+      }
+      // 삽입 완료 후, content script에 메시지 보내기
+      checkBoardState(currentTabId);
+    });
+  }
+}
+
+function checkBoardState(currentTabId) {
+  chrome.tabs.sendMessage(currentTabId, {action: "checkBoardState"}, function(response) {
+    if (chrome.runtime.lastError) {
+      console.error(`Message sending failed: ${chrome.runtime.lastError.message}`);
+      return;
+    }
+    if (response.boardNotEmpty) {
+      alert('게임 보드가 비어있지 않습니다. 모든 칸이 비어있는 상태에서 시작해 주세요.');
+    } else {
+      extractData(currentTabId);
+    }
+  });
+}
+
+function extractData(currentTabId) {
+  chrome.tabs.sendMessage(currentTabId, {action: 'extractData'}, function(response) {
+    if (chrome.runtime.lastError) {
+      console.error(`Message sending failed: ${chrome.runtime.lastError.message}`);
+      return;
+    }
+    if (response && response.data) {
+      // Content Script로부터 추출된 데이터를 solve() 함수에 전달합니다.
+      solve(response.data, currentTabId);  
+    } else {
+      console.error('Failed to extract data.');
+    }
+  });
+}
+
+function solve(data, currentTabId) {
   const ygram = new Game(data[0],data[1]);
   ygram.solve()
-  return ygram.gameBoard.state
+  chrome.tabs.sendMessage(currentTabId, {boardState: ygram.gameBoard.state});
 }
 
 class Board {
@@ -77,37 +84,37 @@ class Board {
 
   setRowLine(lineState, row) {
     for (let index = 0; index < lineState.length; index++) {
-        this.state[row * this.xSize + index] = lineState[index];
+      this.state[row * this.xSize + index] = lineState[index];
     }
   }
 
   getColumnLine(column) {
     let lineState = new Array(this.ySize).fill(0);
     for (let index = 0; index < this.ySize; index++) {
-        lineState[index] = this.state[index * this.xSize + column];
+      lineState[index] = this.state[index * this.xSize + column];
     }
     return lineState;
   }
 
   setColumnLine(lineState, column) {
     for (let index = 0; index < this.ySize; index++) {
-        this.state[index * this.xSize + column] = lineState[index];
+      this.state[index * this.xSize + column] = lineState[index];
     }
   }
 }
 
 class LineCase {
   constructor() {
-      this.blockedTiles = [];
-      this.filledTiles = [];
+    this.blockedTiles = [];
+    this.filledTiles = [];
   }
 }
 
 function getCases(hints, lineSize) {
   const allCases = [];
   for (let hint of hints) {
-      const cases = getLineStateCases(hint, lineSize);
-      allCases.push(cases);
+    const cases = getLineStateCases(hint, lineSize);
+    allCases.push(cases);
   }
   return allCases;
 }
@@ -171,7 +178,7 @@ function getNNumbersTotalCases(n, total) {
 
   // 이미 계산된 값이 있다면 메모에서 가져옵니다.
   if (key in memo) {
-      return memo[key];
+    return memo[key];
   }
 
   let result = [];
