@@ -45,4 +45,4 @@ When you press the Yesgram extension icon while the new Nonogram puzzle is displ
 
 You can color it by clicking the mouse on the blank that is not marked with an X.
 
-Additional) I tested it a while ago, and I don't think I can solve the monthly special Nonogram on time yet. This is the logic until the weekly special no-nogram.
+Additional) I tested it a while ago, and I don't think I can solve the monthly special Nonogram on time yet.
