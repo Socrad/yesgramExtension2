@@ -58,6 +58,10 @@ function extractData(currentTabId) {
     }
     if (response && response.data) {
       // Content Script로부터 추출된 데이터를 solve() 함수에 전달합니다.
+      if (response.data[0].length > 30 || response.data[1].length > 30) {
+        alert("현재 브라우저에 의해 제한된 자원 한계로는 월간노노그램을 풀 수 없습니다. 다른 방법을 연구하는 중입니다.");
+        return;
+      }
       solve(response.data, currentTabId);  
     } else {
       console.error('Failed to extract data.');
