@@ -74,7 +74,6 @@ if (!window.myContentScriptHasRun) {  // 이벤트 리스너 중복 추가 방�
       const data = extractData();
       if (data[0].length > 30 || data[1].length > 30) {
         alert("현재 브라우저에 의해 제한된 자원 한계로는 월간노노그램을 풀 수 없습니다. 다른 방법을 연구하는 중입니다.");
-        return;
       }
       sendResponse({data: data});
     } else if (request.action === "checkBoardState") {    // 페이지 보드판이 비어있는지 체크

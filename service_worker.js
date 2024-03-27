@@ -42,6 +42,9 @@ function extractData(currentTabId) {
       return;
     }
     if (response && response.data) {  
+      if (response.data[0] > 30 || response.data[1] > 30) {
+        return;
+      }
       chrome.tabs.sendMessage(currentTabId, {action: 'solve', data: response.data});
     } else {
       console.error('Failed to extract data.');
