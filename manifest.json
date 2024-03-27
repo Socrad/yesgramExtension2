@@ -15,12 +15,21 @@
     "default_popup" : "popup/popup.html"
   },
   "permissions": ["activeTab", "scripting"],
-  "host_permissions" : ["https://ko.puzzle-nonograms.com/*"],
+  "host_permissions": ["https://ko.puzzle-nonograms.com/*"],
   "content_scripts": [
     {
       "matches": ["https://ko.puzzle-nonograms.com/*"],
       "js": ["contentScript.js"],
       "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "service_worker.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["worker.js"],
+      "matches": ["<all_urls>"]
     }
   ]
 }
