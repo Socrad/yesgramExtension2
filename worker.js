@@ -136,8 +136,6 @@ function getNNumbersTotalCases(n, total, recursive, prototype) {
       }
     }
   }
- 
-
   // memo[key] = result;  // 계산 결과를 메모에 저장
   if (recursive) {
     return result;

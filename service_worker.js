@@ -1,8 +1,6 @@
 const isInjected = new Map();
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log("entering Listener");
-  console.log(request);
   if (request.action === "injectScript") {
     injectScript(request.tabId);
   } else if (request.action === "solve") {
@@ -43,9 +41,7 @@ function extractData(currentTabId) {
       console.error(`Message sending failed: ${chrome.runtime.lastError.message}`);
       return;
     }
-    if (response && response.data) {
-      // Content Script로부터 추출된 데이터를 solve() 함수에 전달합니다.
-      
+    if (response && response.data) {  
       chrome.tabs.sendMessage(currentTabId, {action: 'solve', data: response.data});
     } else {
       console.error('Failed to extract data.');
