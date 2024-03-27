@@ -1,28 +1,25 @@
+const isInjected = new Map();
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log("entering Listener");
   console.log(request);
   if (request.action === "injectScript") {
-    injectScript = getInjector(); 
     injectScript(request.tabId);
   } else if (request.action === "solve") {
     checkBoardState(request.tabId);
   }
 });
 
-function getInjector() {
-  let isInjected = false;
-  return function(currentTabId) {
-    if (!isInjected) {
-      chrome.scripting.executeScript({target : {tabId: currentTabId}, files: ["contentScript.js"]}, function() {
-        if (chrome.runtime.lastError) {
-          console.error(`Script injection failed: ${chrome.runtime.lastError.message}`);
-        } else {
-          isInjected = true;
-          console.log("content script injected");
-        }
-      });
-    }
+function injectScript(currentTabId) {
+  if (!isInjected.has(currentTabId) || !isInjected.get(currentTabId)) {
+    chrome.scripting.executeScript({target : {tabId: currentTabId}, files: ["contentScript.js"]}, function() {
+      if (chrome.runtime.lastError) {
+        console.error(`Script injection failed: ${chrome.runtime.lastError.message}`);
+      } else {
+        isInjected.set(currentTabId, true);
+        console.log("content script injected");
+      }
+    });
   }
 }
 

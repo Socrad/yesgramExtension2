@@ -166,7 +166,7 @@ class Game {
     let isChanged = false;
     for (let row = 0; row < this.rowHints.length; row++) {
 
-      
+      /*
       if (row === 8) {
         console.log("now debugging");
       }
