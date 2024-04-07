@@ -1,10 +1,15 @@
 const isInjected = new Map();
+let isSolving = false;
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "injectScript") {
     injectScript(request.tabId);
   } else if (request.action === "solve") {
     checkBoardState(request.tabId);
+  } else if (request.action === "check solving state") {
+    sendResponse({solving: isSolving});
+  } else if (request.action === "Puzzle Solved") {
+    isSolving = false;
   }
 });
 
@@ -42,9 +47,7 @@ function extractData(currentTabId) {
       return;
     }
     if (response && response.data) {  
-      if (response.data[0] > 30 || response.data[1] > 30) {
-        return;
-      }
+      isSolving = true;
       chrome.tabs.sendMessage(currentTabId, {action: 'solve', data: response.data});
     } else {
       console.error('Failed to extract data.');

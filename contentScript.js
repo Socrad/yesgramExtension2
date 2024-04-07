@@ -1,4 +1,96 @@
 // contentScript.js
+
+var modal = document.createElement('div');
+modal.innerHTML = `
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>다 풀었어요! 또 풀고 싶어요!</p>
+  </div>
+</div>
+`;
+document.body.appendChild(modal);
+
+var style = document.createElement('style');
+style.textContent = `
+.modal {
+  display: none; /* 초기 상태는 숨김 */
+  position: fixed; /* 화면에 고정 */
+  z-index: 1; /* 다른 요소들 위에 표시 */
+  left: 0;
+  top: 0;
+  width: 100%; /* 너비 전체 */
+  height: 100%; /* 높이 전체 */
+  overflow: auto; /* 내용이 넘치면 스크롤 */
+  background-color: rgba(0, 0, 0, 0.4); /* 반투명한 검은색 배경 */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 40%; /* 너비 조정 */
+  /* 중앙 정렬을 위한 설정 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+}
+
+@keyframes animatetop {
+  from {top: -300px; opacity: 0} 
+  to {top: 0; opacity: 1}
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-content p {
+  font-size: 40px; /* 글자 크기 */
+    color: #333; /* 글자 색상 */
+    text-align: center; /* 텍스트 수평 중앙 정렬 */
+    margin: 15px 0; /* 상하 여백으로 수직 위치 조정 */
+}
+
+`;
+document.head.appendChild(style);
+
+// 모달 열기
+function showModal() {
+  var modal = document.getElementById('myModal');
+  var span = document.getElementsByClassName('close')[0];
+  modal.style.display = 'block';
+
+  // 'X' 아이콘을 클릭하면 모달 닫기
+  span.onclick = function() {
+      modal.style.display = 'none';
+  }
+
+  // 모달 외부 영역을 클릭하면 모달 닫기
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          modal.style.display = 'none';
+      }
+  }
+}
+
+
 /** 페이지의 가로힌트와 세로힌트를 읽어서 [힌트, 힌트]배열로 반환함.
  * 
  * @returns {[int[][], int[][]] | null} 
@@ -38,12 +130,18 @@ function extractData() {
 function paintTiles(boardState) {
   const FILLED = 1;
   const BLOCKED = -1;
-  const tiles = document.querySelectorAll('div.cell.selectable.cell-off');
+  // const tiles = document.querySelectorAll('div.cell.selectable.cell-off');
+  const rows = document.querySelectorAll('div.nonograms-cell-back > div.row');
+  const tiles = Array.from(rows).flatMap(row => Array.from(row.children));
+
   boardState.forEach((state, index) =>{
-    if (state == FILLED) {
+    
+    if (state == FILLED && tiles[index].classList.contains('cell-off')) {
+      tiles[index].classList.replace('cell-off', 'cell-on')
       
-    } else if (state == BLOCKED) {
-      tiles[index].className = 'cell selectable cell-x icon-cancel';
+    } else if (state == BLOCKED && tiles[index].classList.contains('cell-off')) {
+      tiles[index].classList.replace('cell-off', 'cell-x'); 
+      tiles[index].classList.add('icon-cancel');
     }
   });
 }
@@ -72,9 +170,6 @@ if (!window.myContentScriptHasRun) {  // 이벤트 리스너 중복 추가 방�
 
     if (request.action === 'extractData') {     // 힌트 읽기
       const data = extractData();
-      if (data[0].length > 30 || data[1].length > 30) {
-        alert("현재 브라우저에 의해 제한된 자원 한계로는 월간노노그램을 풀 수 없습니다. 다른 방법을 연구하는 중입니다.");
-      }
       sendResponse({data: data});
     } else if (request.action === "checkBoardState") {    // 페이지 보드판이 비어있는지 체크
       const notEmpty = isBoardNotEmpty();
@@ -87,7 +182,10 @@ if (!window.myContentScriptHasRun) {  // 이벤트 리스너 중복 추가 방�
           const worker = new Worker(URL.createObjectURL(blob));
 
           worker.onmessage = function(e) {
-            if (e && e.data) {
+            if (e && e.data === 'Puzzle Solved') {
+              chrome.runtime.sendMessage({action:'Puzzle Solved'});
+              showModal();
+            } else if (e && e.data) {
               paintTiles(e.data);
             }
           };
@@ -99,3 +197,5 @@ if (!window.myContentScriptHasRun) {  // 이벤트 리스너 중복 추가 방�
 }
 
 window.myContentScriptHasRun = true;
+
+
