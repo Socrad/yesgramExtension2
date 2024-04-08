@@ -24,8 +24,6 @@ The computer also releases a 25x25 nonogram in the blink of an eye.
 Some may be upset that computers solve puzzles much faster than humans, but think again. No one is offended just because a puppy runs faster than a human.
 
 No more wrapping your hair and not being in pain. Yield to your computer Your computer is born to calculate. Like watching and healing a puppy running fast on the grass and having fun, watch the computer finish the calculations in an instant.
- 
-In addition, your computer is loyal to you. The computer does the hard-won calculations you do in a flash, without blocking, but there's no interest in the glory of victory. The computer will yield victory to you. All you have to do is paint a tile that your computer hasn't blocked, and the glory of victory will be yours.
 
 In all of this process, all you need to gain calmness, joy, and a healing heart is the sensitivity to make your computer look like your pet.
 
@@ -41,7 +39,7 @@ How to use
 ==========
 When you press the Yesgram extension icon on another page, the “Go to the Nonogram site” button pops up. Pressing the button will take you to the Nonogram site.
 
-When you press the Yesgram extension icon while the new Nonogram puzzle is displayed on the Nonogram site, the “Unpack Nonogram” button pops up. When you press the button, the computer releases the nonogram and marks the board with an X.
+When you press the Yesgram extension icon while the new Nonogram puzzle is displayed on the Nonogram site, the “Unpack Nonogram” button pops up. When you press the button, the computer releases the nonogram and marks the board.
 
-You can color it by clicking the mouse on the blank that is not marked with an X.
+As of now, the site does not recognize your computer's nonogram solver results.
 
