@@ -19,7 +19,7 @@ This extension aims to provide a similar experience in the relationship between 
 
 As soon as you click the Solve button, your computer will solve the puzzle at a dazzling speed.
 
-The computer also releases a 25x25 nonogram in the blink of an eye.
+The computer also releases a 30x30 nonogram in the blink of an eye.
 
 Some may be upset that computers solve puzzles much faster than humans, but think again. No one is offended just because a puppy runs faster than a human.
 
@@ -39,7 +39,7 @@ How to use
 ==========
 When you press the Yesgram extension icon on another page, the “Go to the Nonogram site” button pops up. Pressing the button will take you to the Nonogram site.
 
-When you press the Yesgram extension icon while the new Nonogram puzzle is displayed on the Nonogram site, the “Unpack Nonogram” button pops up. When you press the button, the computer releases the nonogram and marks the board.
+When you press the Yesgram extension icon while the new Nonogram puzzle is displayed on the Nonogram site, the “Solve Nonogram” button pops up. When you press the button, the computer releases the nonogram and marks the board.
 
 As of now, the site does not recognize your computer's nonogram solver results.
 

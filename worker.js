@@ -71,9 +71,14 @@ class Game {
       // 업데이트할 라인을 선택하여 업데이트한다.
       
       if(leftRows.length > 0) {
-        let index = selectLine(this.rowHints, leftRows);
-        this.gameBoard.getRowLine(index, rowLine);
-        
+        let index = -1;
+        let canSkip = true;
+        while(canSkip && leftRows.length > 0) {
+          index = selectLine(this.rowHints, leftRows);
+          this.gameBoard.getRowLine(index, rowLine);
+          canSkip = checkSkip(this.rowHints[index], rowLine);
+        }
+
         if(!isEqual(this.prevRowLines[index], rowLine)) {
           this.updateLine(rowLine,this.rowHints[index],this.conflictCasesRow[index]);
 
@@ -84,8 +89,14 @@ class Game {
         
       }
       if(leftColumns.length > 0) {
-        let index = selectLine(this.columnHints, leftColumns);
-        this.gameBoard.getColumnLine(index, columnLine);
+        let index = -1;
+        let canSkip = true;
+        while(canSkip && leftColumns.length >0) {
+          index = selectLine(this.columnHints, leftColumns);
+          this.gameBoard.getColumnLine(index, columnLine);
+          canSkip = checkSkip(this.columnHints[index], columnLine);
+        }
+        
         if (!isEqual(this.prevColumnLines[index], columnLine)) {
           this.updateLine(columnLine, this.columnHints[index], this.conflictCasesColumn[index]);
 
@@ -108,6 +119,7 @@ class Game {
       }
     }
   }
+
 
   /** 힌트와 라인 상태를 반영하여 라인을 업데이트한다.
    * 
@@ -169,6 +181,21 @@ class Game {
     }
     disjunctionLine(currentLine, conjunctioned); // currentLine 에 conjuntioned를 업데이트
   }
+}
+
+function checkSkip(hint, line) {
+  let size = 0;
+  if (!line.includes(FILLED) && !line.includes(BLOCKED)) {
+    for ( length of hint) {
+      size += length;
+      size++;
+    }
+    size--;
+    if (line.length >= 2 * size) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function selectLine(hints, leftHintIndexes) {
