@@ -115,9 +115,9 @@ class Game {
    * 
    * @param {*} currentLine 업데이트할 라인, 
    * @param {*} hint 해당 라인의 힌트
-   * @param {*} confilctCases 해당 라인의 상충되는 케이스인덱스의 맵
+   * @param {*} conflictCases 해당 라인의 상충되는 케이스인덱스의 맵
    */
-  updateLine(currentLine, hint, confilctCases) {   
+  updateLine(currentLine, hint, conflictCases) {   
     // 1. 힌트를 토대로 라인을 생성한다
     // 2. 생성한 라인을 currentLine과 대조한다
     // 3. currentLine과 상충되지 않는 라인끼리 비교하여 공통되는 부분을 currentLine에 칠하거나 막는다.
@@ -131,18 +131,36 @@ class Game {
     const conjunctioned = new Int8Array(currentLine.length).fill(NOT_INITIALIZED);
     let index = 0;
     let notFinish = true;
+    let firstConflictedIndex = -1;
 
     while (notFinish) {
-      notFinish = makeLine(line, hint); // 1. 힌트를 토대로 라인을 생성한다. 이전 line상태가 있으면 line 상태를 다음 경우로 바꾼다.
-      if (confilctCases[index]) {   // 상충하는 것으로 기억했던 라인은 건너뛴다.
-        index ++;
-        continue;
+      if (conflictCases[index]) {   // 상충하는 것으로 기억했던 라인은 건너뛴다.
+        for(let i=0; i<line.length; i++) {
+          line[i] = conflictCases[index].jumpedLine[i];
+        }
+        notFinish = checkFinished(line);
+        index = conflictCases[index].jumpedIndex;
+        if(firstConflictedIndex !== -1) {
+          delete conflictCases[index];  //연속으로 상충중이면 현재 키값은 삭제해서 다음 상충하지 않을 때 한번에 점프되도록 처리
+        }
+      } else {
+        notFinish = makeLine(line, hint); // 1. 힌트를 토대로 라인을 생성한다. 이전 line상태가 있으면 line 상태를 다음 경우로 바꾼다.
       }
       
       let isConflict = confirmLine(currentLine, line); // 2. 생성한 라인을 currentLine과 대조
       if (isConflict) {
-        confilctCases[index] = true;    // 상충하면 몇번째 케이스인지 기억해둔다.
+        if (firstConflictedIndex === -1) {
+          firstConflictedIndex = index;  // 상충하기 시작하면 몇번째 케이스인지 기억해둔다.
+        } else if (notFinish === false) { // 루프 마지막까지 연속으로 상충하는 경우만 나오면 마지막 경우로 점프하도록 설정
+          conflictCases[firstConflictedIndex] = {jumpedLine:[...line], jumpedIndex:index};  
+          firstConflictedIndex = -1;
+        }
       } else {
+        if (firstConflictedIndex !== -1) {
+          conflictCases[firstConflictedIndex] = {jumpedLine:[...line], jumpedIndex:index};  // 상충이 풀리면 상충 시작한 인덱스에서 점프할 수 있도록 설정
+          firstConflictedIndex = -1;
+        }
+        
         if (conjunctioned[0] === NOT_INITIALIZED) {   // 첫번째 얻어진 라인이면 첫 라인이 conjunctioned가 된다.
           conjunctioned.set(line);
         } else {
