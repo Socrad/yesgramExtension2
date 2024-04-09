@@ -1,29 +1,33 @@
 const isInjected = new Map();
-let isSolving = false;
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "injectScript") {
-    injectScript(request.tabId);
+    injectScript(request.tabId).then((result)=>{
+      sendResponse({data:result});
+    });
+    return true;
   } else if (request.action === "solve") {
     checkBoardState(request.tabId);
-  } else if (request.action === "check solving state") {
-    sendResponse({solving: isSolving});
-  } else if (request.action === "Puzzle Solved") {
-    isSolving = false;
-  }
+  } 
 });
 
 function injectScript(currentTabId) {
-  if (!isInjected.has(currentTabId) || !isInjected.get(currentTabId)) {
-    chrome.scripting.executeScript({target : {tabId: currentTabId}, files: ["contentScript.js"]}, function() {
-      if (chrome.runtime.lastError) {
-        console.error(`Script injection failed: ${chrome.runtime.lastError.message}`);
-      } else {
-        isInjected.set(currentTabId, true);
-        console.log("content script injected");
-      }
-    });
-  }
+  return new Promise((resolve)=>{
+    if (!isInjected.has(currentTabId) || !isInjected.get(currentTabId)) {
+      chrome.scripting.executeScript({target : {tabId: currentTabId}, files: ["contentScript.js"]}, function() {
+        if (chrome.runtime.lastError) {
+          console.error(`Script injection failed: ${chrome.runtime.lastError.message}`);
+          resolve(false);
+        } else {
+          isInjected.set(currentTabId, true);
+          resolve(true);
+        }
+      });
+    } else {
+      resolve(false);
+    }
+  });
+  
 }
 
 function checkBoardState(currentTabId) {
@@ -47,7 +51,6 @@ function extractData(currentTabId) {
       return;
     }
     if (response && response.data) {  
-      isSolving = true;
       chrome.tabs.sendMessage(currentTabId, {action: 'solve', data: response.data});
     } else {
       console.error('Failed to extract data.');

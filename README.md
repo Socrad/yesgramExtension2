@@ -41,5 +41,4 @@ When you press the Yesgram extension icon on another page, the “Go to the Nono
 
 When you press the Yesgram extension icon while the new Nonogram puzzle is displayed on the Nonogram site, the “Solve Nonogram” button pops up. When you press the button, the computer releases the nonogram and marks the board.
 
-As of now, the site does not recognize your computer's nonogram solver results.
 

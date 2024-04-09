@@ -1,14 +1,15 @@
 
-onmessage = function (e) {
-  solve(e.data);
-  postMessage('Puzzle Solved');
-};
 
 // 상수 선언
 const BLOCKED = -1;
 const FILLED = 1;
 const NEUTRAL = 0;
 const NOT_INITIALIZED = 2;
+
+onmessage = function (e) {
+  solve(e.data);
+  postMessage('Puzzle Solved');
+};
 
 function solve(data) {
   const ygram = new Game(data[0],data[1]);
@@ -68,6 +69,7 @@ class Game {
     let leftRows = Array.from({ length: this.rowHints.length }, (_, index) => index);
     let leftColumns = Array.from({ length: this.columnHints.length }, (_, index) => index);
     while (notFinished) {
+      
       // 업데이트할 라인을 선택하여 업데이트한다.
       
       if(leftRows.length > 0) {
