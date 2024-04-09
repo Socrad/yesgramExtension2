@@ -2,8 +2,6 @@
 Introduction
 ============
 This Chrome extension solves the Nonogram puzzle at https://ko.puzzle-nonograms.com
-
-The entire process is not automatic, it only marks the tiles that should not be painted.
  
 But this explanation is too dry.
  
@@ -39,6 +37,6 @@ How to use
 ==========
 When you press the Yesgram extension icon on another page, the “Go to the Nonogram site” button pops up. Pressing the button will take you to the Nonogram site.
 
-When you press the Yesgram extension icon while the new Nonogram puzzle is displayed on the Nonogram site, the “Solve Nonogram” button pops up. When you press the button, the computer releases the nonogram and marks the board.
+When you press the Yesgram extension icon while the new Nonogram puzzle is displayed on the Nonogram site, the “Solve Nonogram” button pops up. When you press the button, the computer solve the nonogram and marks the board.
 
 
